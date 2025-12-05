@@ -1,0 +1,37 @@
+name: Deploy to EC2
+
+# Trigger: When we push code to the 'main' branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: SSH into EC2 and Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            # 1. Go to the folder
+            cd cloud-shop-api
+            
+            # 2. Pull the latest code from GitHub
+            git pull origin main
+            
+            # 3. Rebuild the Docker Image (using the new code)
+            docker build -t cloud-shop-image .
+            
+            # 4. Stop and Remove the old Container
+            docker rm -f shop-container || true
+            
+            # 5. Run the new Container (Injecting secrets from the server's .env file)
+            docker run -d -p 3000:3000 --env-file .env --restart always --name shop-container cloud-shop-image

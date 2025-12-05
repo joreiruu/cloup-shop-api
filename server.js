@@ -108,5 +108,5 @@ app.post('/orders', async (req, res) => {
 // --- START SERVER ---
 const PORT = 3000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`🚀 CLOUD SHOP IS LIVE on http://localhost:${PORT}`);
 });
