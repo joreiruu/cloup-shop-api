@@ -6,14 +6,18 @@ const app = express();
 app.use(express.json()); 
 
 // 1. Database Configuration
-const pool = new Pool({
-    user: process.env.DB_USER || 'postgres',
-    host: process.env.DB_HOST || 'localhost', 
-    database: process.env.DB_NAME || 'cloud_shop',
-    password: process.env.DB_PASSWORD, 
-    port: 5432,
-});
 
+
+const pool = new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: 5432,
+    ssl: {
+        rejectUnauthorized: false 
+    }
+});
 // 2. Test the Connection
 pool.connect()
     .then(() => console.log('✅ Connected to PostgreSQL successfully!'))
